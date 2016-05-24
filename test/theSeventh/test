@@ -1,0 +1,26 @@
+总用量 204
+-rwxrwxr-x. 1 linuxr linuxr  9056 4月  22 19:49 daemon
+-rw-rw-r--. 1 linuxr linuxr  1751 4月  22 19:49 daemon.c
+-rw-rw-r--. 1 linuxr linuxr  1120 4月  22 18:57 diffork.c
+-rwxrwxr-x. 1 linuxr linuxr  8800 4月  22 17:46 doffork
+-rwxrwxr-x. 1 linuxr linuxr 10088 4月  22 18:57 doffork1
+-rwxrwxr-x. 1 linuxr linuxr  9024 4月  22 21:03 execve
+-rw-rw-r--. 1 linuxr linuxr  1050 4月  22 21:03 execve.c
+-rwxrwxr-x. 1 linuxr linuxr  8760 4月  23 09:14 fork
+-rwxrwxr-x. 1 linuxr linuxr  8712 4月  20 20:19 fork1
+-rw-rw-r--. 1 linuxr linuxr   848 4月  20 20:19 fork1.c
+-rwxrwxr-x. 1 linuxr linuxr  8864 4月  20 20:54 fork3
+-rw-rw-r--. 1 linuxr linuxr   852 4月  20 20:54 fork3.c
+-rw-rw-r--. 1 linuxr linuxr   812 4月  23 09:21 fork.c
+-rwxrwxr-x. 1 linuxr linuxr  8920 4月  23 10:13 mynice
+-rw-rw-r--. 1 linuxr linuxr  1107 4月  23 10:13 mynice.c
+-rwxrwxr-x. 1 linuxr linuxr 16896 4月  27 23:23 myshell
+-rw-rw-r--. 1 linuxr linuxr  9202 4月  27 23:23 myshell.c
+-rwxrwxr-x. 1 linuxr linuxr  8776 4月  22 20:51 processimage
+-rw-rw-r--. 1 linuxr linuxr   625 4月  22 20:51 processimage.c
+-rwsr-xr-x. 1 root   linuxr  8872 4月  22 23:31 studyuid
+-rw-rw-r--. 1 linuxr linuxr   797 4月  23 09:37 studyuid.c
+-rw-r--r--. 1 linuxr linuxr     0 4月  27 23:26 test
+-rw-r--r--. 1 root   root       0 4月  22 22:44 test.c
+-rwxrwxr-x. 1 linuxr linuxr  8808 4月  22 22:15 wait
+-rw-rw-r--. 1 linuxr linuxr  1615 4月  22 22:15 wait.c
