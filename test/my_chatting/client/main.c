@@ -73,6 +73,7 @@ void AddFriend_form();
 void DelFriend_form();
 void Select_ChatFriend_form();
 void Chat_form();
+void CreateGrp_form()
 void UnreadMsg_form();
 void Read_msgRecord( char * name  , int message_class );
 void Write_msgRecord( char * name ,char * msg_name , char * msg , char * time , int message_class );
@@ -82,7 +83,7 @@ void get_Time( char * now_time );
 void process_msg( char * buf );
 void Comb_msg( char * buf , char * name , char * type , char * msg );
 int Get_unread_cnt( msgNode * h );
-
+int Friend_apply( char * name );
 
 
 int Cur_class;                  //当前操作类型（群组/私聊）

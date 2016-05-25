@@ -49,6 +49,11 @@ void Exit_Grp( char * grp_name , int id );
 int Join_Grp( char * grp_name , int id );
 int Create_Grp( char * grp_name , int id );
 int Is_Grp( char * grp_name );
+void Conbine_msg( char * buf , char * name , char * type , char * msg );
+void Cut_msg( char * buf , int * id , char * type , char * name , char * msg );
+void Recv_msg( int * connfd );
+int Check_usr( char * name , char * passwd );
+
 
 #include"Usr.c"         //处理用户操作
 #include"group.c"       //处理群操作

@@ -142,7 +142,7 @@ void process_msg( char * buf )
             break;
         }
         case '1':{
-            if( msg[1] == '0' )
+            if( msg[0] == '0' )
                 FLAG[1] = 0;
             else{
                 FLAG[1] = 1;
@@ -150,25 +150,40 @@ void process_msg( char * buf )
             break;
         }
         case '2':{
-            if( msg[2] == '0' )
+            if( msg[0] == '0' )//对方拒绝
                 FLAG[2] = 0;
-            else{
+            else if( msg[0] == '1' ){//加入成功
                 Add_friend( name , USR_CLASS );                
                 FLAG[2] = 1;
-            }     
+            }else if( msg[0] == '2' ){//有好友申请发送过来
+                if( Friend_apply( name ) )
+                    Comb_msg( buf , "2" , name , "1" );//同意
+                else
+                    Comb_msg( buf , "2" , name, "2" );//拒绝
+                send( sockfd , buffer , MAXSIZE , 0 );
+                FLAG[2] = 2;
+            }else if( msg[0] == '3' ){//没有这个人
+                FLAG[2] = 3;
+            }else if( msg[0] == '4' ){//用户不在线
+                FLAG[2] = 4;
+            }       
             break;
         }
         case '3':{
-             if( msg[3] == '0' )
+             if( msg[0] == '0' )
                 FLAG[3] = 0;
-            else{
+            else if( msg[0] == '2' ){
                 Del_friend( name , USR_CLASS );                
                 FLAG[3] = 1;
-            }                
+            }else if(msg[0] == '1'){
+                Del_friend( name , USR_CLASS );
+                Comb_msg( buf , "3" , name , "1" );
+                printf("[ 系统提示 ]%s居然删除了你～kuai去打ta……PS：本系统才不是想看热闹呢，哼～\n",name);
+                    }                
             break;
         }
         case '4':{
-            if( msg[4] == '0' )
+            if( msg[0] == '0' )
                 FLAG[4] = 0;
             else{
                 Add_friend( name , GRP_CLASS );                
@@ -177,26 +192,28 @@ void process_msg( char * buf )
             break;
         }
         case '5':{
-            if( msg[5] == '0' )
+            if( msg[0] == '0' )
                 FLAG[5] = 0;
-            else{
+            else if( msg[0] == '1' ){
                 Add_friend( name , GRP_CLASS );                
                 FLAG[5] = 1;
-            }           
+            }else{
+                FLAG[5] = 3;
+            }
             break;
         }
         case '6':{
-            if( msg[6] == '0' )
+            if( msg[0] == '0' )
                 FLAG[6] = 0;
             else{
                 Del_friend( name , GRP_CLASS );                
-                FLAG[6] = 1;
+                FLAG[6] = 2;
             }              
             break;
         }
         case '7':{
             if( Cur_state == 1 && Cur_class == USR_CLASS && !strcmp( name , Cur_name ) ){
-                printf("[%s 说：]%s\n",name,msg);
+                printf("[ %s 说：]%s\n",name,msg);
                 Write_msgRecord( name , name , msg , now_time , USR_CLASS );
             }else{
                 MsgIn_unread( Head , 1 , USR_CLASS , name );
@@ -218,7 +235,7 @@ void process_msg( char * buf )
             break;
         }
         case '9':{
-            if( msg[9] == '0' )
+            if( msg[0] == '0' )
                 FLAG[9] = 0;
             else               
                 FLAG[9] = 1;            

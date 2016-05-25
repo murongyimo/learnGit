@@ -84,3 +84,25 @@ int Del_friend( char * name , int type )
         return 0;
     }
 }
+
+int Friend_apply( char * name )
+{//当好友申请发送过来时，调用此函数，同意返回1,不同意返回0
+    char c;
+    
+    while(1){
+        printf("[ 系统提示 ]：%s想要勾搭，咳,加你为好友，你的态度？[Y]同意  [N]拒绝\n",name);
+        scanf("%c",&c);
+        if( c == 'y' || c == 'Y' ){
+            Add_friend( name , USR_CLASS )
+            return 1;
+        }else if( c == 'n' || c == 'N' ){
+            return 0;
+        }else{
+            printf("[ 系统提示 ]请给一个明确的态度，你这样我会很为难的QAQ～\n");
+        }
+    }
+}
+
+
+
+

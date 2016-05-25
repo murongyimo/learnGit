@@ -57,6 +57,28 @@ int Add_usr( char * name , char * passwd )
     return id;
 }
 
+int Check_usr( char * name , char * passwd )
+{//验证用户名与密码是否匹配，匹配返回0，不匹配返回1
+    int ID;
+    char buf[MAX_NAME_SIZE + MAX_PASSWD_SIZE + 10] , name_buf[MAX_NAME_SIZE] , passwd_buf[MAX_PASSWD_SIZE];
+    FILE * fd;
+    if(  !( fd = fopen( "passwd.txt" ,  "r"  ) )){
+        perror( "open passwd.txt wrong !" );
+        exit(1);
+    }else{
+        while( 3 == fscanf( fd , "%s %s %d\n" , name_buf , passwd_buf , &ID ) ){
+            if( !strcmp( name , name_buf ) ){
+                break;
+            }
+        }   
+        fclose(fd);
+    }
+    if( !strcmp( passwd , passwd_buf) )
+        return 0;
+    else
+        return 1;
+}
+
 void Chg_usr_num( int num )
 {//修改用户总数为num
     int fd;
