@@ -33,8 +33,8 @@
 #define UNREAD 300              //一条未读信息缓存长度
 
 #define BUF 500                 //socket上的信息缓存
-#define HOST_ADDR "192.168.30.192"//ip地址
-#define PORT 6000               //端口号
+#define HOST_ADDR "127.0.0.1"//ip地址
+#define PORT 4507              //端口号
 
 
 
@@ -73,7 +73,7 @@ void AddFriend_form();
 void DelFriend_form();
 void Select_ChatFriend_form();
 void Chat_form();
-void CreateGrp_form()
+void CreateGrp_form();
 void UnreadMsg_form();
 void Read_msgRecord( char * name  , int message_class );
 void Write_msgRecord( char * name ,char * msg_name , char * msg , char * time , int message_class );
@@ -108,12 +108,13 @@ char buffer[MAXSIZE];
 #include"message.c"
 #include"form.c"
 
+
 int main( void )
 {
     pthread_t thid;
     struct sockaddr_in serv_addr;
     char buf[MAXSIZE];
-    
+    int connfd , optval;
 
     if( ( sockfd = socket( AF_INET , SOCK_STREAM , 0 ) ) < 0 ){
         perror("socket create wrong !");
@@ -123,13 +124,19 @@ int main( void )
     serv_addr.sin_port = htons( PORT );
     inet_aton( HOST_ADDR , &serv_addr.sin_addr );
     printf("connecting……\n");
-    connect( sockfd , ( struct sockaddr * )&serv_addr , sizeof( struct sockaddr_in ) );
+    if(connect( sockfd , ( struct sockaddr * )&serv_addr , sizeof( struct sockaddr_in ) )){
+        perror("connect failed.");
+        exit(1);
+    }else{
+        printf("has connected...\n");
+    }
     if( pthread_create( &thid , NULL , (void *)&Start_form , NULL ) != 0 ){
         perror( "thread create failed." );
         exit(1);
     }
     while( 1 ){
-        recv( sockfd , &buf , MAXSIZE , 0 );
+        recv( sockfd , buf , MAXSIZE , 0 );
+//        printf("buf = %s\n",buf);
         process_msg( buf );
     }
     return 0;

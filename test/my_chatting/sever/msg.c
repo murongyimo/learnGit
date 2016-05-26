@@ -6,37 +6,50 @@
  ************************************************************************/
 
 
+void make_pthread( int * connfd )
+{
+    while(1){
+        Recv_msg(*connfd);
+    }
+}
 void Cut_msg( char * buf , int * id , char * type , char * name , char * msg )
 {//分割服务器发过来的信息
     char * ID;
     ID = strtok( buf , "#" );
     *id = atoi(ID);
-    strcpy( name , strtok( buf , "#" ) );
     strcpy( type , strtok( NULL , "#" ) );
+    strcpy( name , strtok( NULL , "#" ) );
     strcpy( msg , strtok( NULL , "\n" ) );
+    printf("接受消息：id = %d , type = %s , name = %s , msg = %s \n", *id , type , name , msg );
 }
 
 void Conbine_msg( char * buf , char * name , char * type , char * msg )
 {//组合待发送的信息(格式)：发送者姓名#类型#消息内容\n
     sprintf( buf , "%s#%s#%s\n" , name , type , msg );
+    printf("发送消息：name = %s , type = %s ,msg = %s \n", name, type, msg );
 }
 
-void Recv_msg( int * connfd )
+void Recv_msg( int fd )
 {   //收到客户端的信息，并进行处理   (waiting~)
     //name:发送者姓名
     char buf[MAXSIZE] , type[5] , msg[MAX_MESSAGE_BUF] , name[MAX_NAME_SIZE] , id_buf[5];
-    int id , i , fd = *connfd;//发送者的socket
-    recv( *connfd , &buf , MAXSIZE , 0 );
+    int id , i ;//发送者的socket
+
+    recv( fd , buf , MAXSIZE , 0 );
     Cut_msg( buf , &id , type , name , msg );
     sprintf( id_buf , "%d" , id );
     switch(type[0]){
         case '0':{
-            if( strcmp( name , "$" ) ){//用户名检验
-                if( Is_usr( msg ) )
+            if( !strcmp( name , "$" ) ){//用户名检验
+                id = Is_usr( msg );
+                sprintf( id_buf , "%d" , id );                 
+                if( !id )
                     Conbine_msg( buf , "$" , "0" , "0" );//用户不存在
                 else
                     Conbine_msg( buf , "$" , "0" , id_buf );//用户存在 
-            }else{//密码校验
+            }else{//密码校验     
+                id = Is_usr( name );
+                sprintf( id_buf , "%d" , id );             
                 if( Check_usr( name , msg ) )
                     Conbine_msg( buf , "$" , "0" , "0" );//用户登录失败
                 else{
@@ -47,16 +60,18 @@ void Recv_msg( int * connfd )
             break;
         }
         case '1':{
-            if( strcmp( name , "$" ) ){//用户名检验
-                if( Is_usr( msg ) )
-                    Conbine_msg( buf , "$" , "1" , "0" );//用户不存在
+            if( !strcmp( name , "$" ) ){//用户名检验
+                if( !Is_usr( msg ) )
+                    Conbine_msg( buf , "$" , "1" , "1" );//用户不存在(成功)
                 else
-                    Conbine_msg( buf , "$" , "1" , id_buf );//用户存在 
+                    Conbine_msg( buf , "$" , "1" , "0" );//用户存在（失败） 
             }else{
-                if( !Add_usr( name , msg ) )
+                if( !Add_usr( name , msg ) ){
+                    printf("name:%s , msg:%s",name , msg);
                     Conbine_msg( buf , "$" , "1" , "0" );//用户注册失败
+                }
                 else
-                    Conbine_msg( buf , "$" , "1" , id_buf );//用户注册成功
+                    Conbine_msg( buf , "$" , "1" , "1" );//用户注册成功
             }            
             break;
         }
@@ -71,16 +86,16 @@ void Recv_msg( int * connfd )
                 else{
                     Conbine_msg( buf , USR[id].name , "2" , "2" );
                     id = Is_usr( name );
-                    fd = * ( USR[id].fd );
+                    fd = * ( USR[id].connfd );
                 }
             }else if( msg[0] == '1' ){
                 Conbine_msg( buf , USR[id].name , "2" , "1" );
                 id = Is_usr( name );                
-                fd = * ( USR[id].fd );
+                fd = * ( USR[id].connfd );
             }else if( msg[1] == '2' ){
                 Conbine_msg( buf , USR[id].name , "2" , "0" );
                 id = Is_usr( name );                
-                fd = * ( USR[id].fd );
+                fd = * ( USR[id].connfd );
             }
             break;
         }
@@ -94,7 +109,7 @@ void Recv_msg( int * connfd )
                     Conbine_msg( buf , USR[id].name , "3" , "2" );
                 }
                 id = Is_usr( name );                
-                fd = * ( USR[id].fd );                    
+                fd = * ( USR[id].connfd );                    
             }
             break;
         }
@@ -120,7 +135,7 @@ void Recv_msg( int * connfd )
             break;
         }
         case '6':{
-            Exit_Grp( name , id ) 
+            Exit_Grp( name , id );
             Conbine_msg( buf , "$" , "6" , "2" );
             break;
         }
@@ -138,6 +153,5 @@ void Recv_msg( int * connfd )
             break;
         }
     }
-
     send( fd , buf , MAXSIZE , 0 );
 }

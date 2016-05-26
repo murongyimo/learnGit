@@ -29,14 +29,16 @@
 #define MAX_TIME_SIZE 30        //存放时间数组长度
 #define MAX_GRP_USR 20          //存放群聊人数上限
 #define MAXPATH 100             //最大路径长度
+#define PORT 4507
 
-struct usr_node{
+typedef struct usr_node{
     int state;//在线为1,不在线为0
-    int  * connfd;
+    int * connfd;
     char name[MAX_NAME_SIZE];
-}USR[MAX_USR];
+}usrNode;
 
-void Recv_msg( int * connfd );
+
+void Recv_msg( int fd );
 void Chg_usr_num( int num );
 int Get_usr_num();
 int Is_usr( char * name );
@@ -51,16 +53,18 @@ int Create_Grp( char * grp_name , int id );
 int Is_Grp( char * grp_name );
 void Conbine_msg( char * buf , char * name , char * type , char * msg );
 void Cut_msg( char * buf , int * id , char * type , char * name , char * msg );
-void Recv_msg( int * connfd );
 int Check_usr( char * name , char * passwd );
+void make_pthread( int * connfd );
 
+int listenfd;       //监听套接字
+usrNode USR[MAX_USR];
+//int USR_NUM = 0     //当前系统中已申请的用户个数
 
 #include"Usr.c"         //处理用户操作
 #include"group.c"       //处理群操作
 #include"msg.c"
 
-int listenfd;       //监听套接字
-//int USR_NUM = 0     //当前系统中已申请的用户个数
+
 
 int main( void )
 {
@@ -68,19 +72,39 @@ int main( void )
     struct sockaddr_in serv_addr, cli_addr;
     socklen_t len;
     time_t ticks;
-    int connfd;
+
+    int connfd , optval = 1;
     
     memset( USR , 0 , MAX_USR * sizeof(struct usr_node) );
-    listenfd = socket( AF_INET , SOCK_STREAM , 0 );
+    if((listenfd = socket( AF_INET , SOCK_STREAM , 0 )) <0 ){
+        perror("listenfd socket create");
+        exit(1);
+    }
+    
+    if(setsockopt( listenfd , SOL_SOCKET , SO_REUSEADDR , (void*)&optval , sizeof(int)  ) < 0 ){
+        perror("setsockopt error");
+        exit(1);
+    }    
+    
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl( INADDR_ANY );
+    serv_addr.sin_port = htons(PORT);
     bind( listenfd , ( struct sockaddr * )&serv_addr , sizeof( struct sockaddr_in ) );
-    listen( listenfd , LISTEN_NUM );
+    if(listen( listenfd , LISTEN_NUM ) < 0 ){
+        perror("listen error");
+        exit(1);
+    }
     
     while( 1 ){
         len = sizeof( cli_addr );
-        connfd = accept( listenfd , ( struct sockaddr * )&cli_addr , &len );
-        pthread_create( malloc(sizeof(pthread_t)) , NULL , (void *)&Recv_msg , (void *)&connfd );
+        if((connfd = accept( listenfd , ( struct sockaddr * )&cli_addr , &len )) < 0 ){
+            perror("accept error");
+            exit(1);
+        }else{
+            printf("accept==>IP:%s\tPort:%d\n",inet_ntoa((cli_addr.sin_addr)) , cli_addr.sin_port);
+        }
+        pthread_create( malloc(sizeof(pthread_t)) , NULL , (void *)&make_pthread , (void *)&connfd );
+
     }
     
     return 0;

@@ -13,11 +13,12 @@ void Start_form()
     Cur_state = 0;
     while(1){
         flag = 1;
-        h = 0;
+
         printf("\n×××××××××××××××登陆界面×××××××××××××××\n");
         printf("     _$0_（退出）     _$1_(注册)\n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         while(flag){
+            h = 0;
             printf("请输入用户名：");
             fgets(  name , MAX_NAME_SIZE + 2 , stdin );
             //判定输入是否正确
@@ -41,7 +42,7 @@ void Start_form()
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
         
             else{ 
-                /*将name传到服务器上验证*/
+                //将name传到服务器上验证
                 name[i] = '\0';
                 FLAG[0] = -1;
                 Comb_msg( buffer, "0" , "$" , name );
@@ -56,14 +57,14 @@ void Start_form()
                         break;
                     }
                 }
-                
+                if( h == 1 ) 
+                    continue;                
             }
         }
-        if( h == 1 ) 
-            continue;
+
         flag = 1;
         while(flag){
-
+            h = 0;
             printf("请输入密码：");
             fgets(  passwd , MAX_PASSWD_SIZE + 2 , stdin );
             
@@ -84,7 +85,7 @@ void Start_form()
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
 
             else{
-                /*将passwd传到服务器上验证*/
+                //将passwd传到服务器上验证/
                 passwd[i] = '\0';    
                 FLAG[0] = -1;
                 Comb_msg( buffer, "0" , name , passwd );
@@ -99,12 +100,11 @@ void Start_form()
                         break;
                     }
                 }                
-
- 
+                if( h == 1 ) 
+                    continue;
             }
         }
-        if( h == 1 ) 
-            continue;
+
         printf("登录成功！ \n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         strcpy(My_Name,name);
@@ -119,16 +119,15 @@ void register_form()
     char passwd[MAX_PASSWD_SIZE + 2] ,name[MAX_NAME_SIZE + 2] , c;
     Cur_state = 0;
     while(1){
-        h = 0;
         My_ID = 0;
         printf("\n×××××××××××××××注册界面×××××××××××××××\n");
         printf("     _$0_（退出）     _$1_(登录)\n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         while(flag){
+            h = 0;
             flag = 1;
             printf("请输入用户名：");
             fgets(  name , MAX_NAME_SIZE + 2 , stdin );
-
             //判定输入是否正确
             for( i = 0 ; i < MAX_NAME_SIZE + 2 ; i++ ){
                 if( name[i] <48 || ( name[i] > 57 && name[i] < 65 ) || ( name[i] > 90 && name[i] < 97 ) || name[i] > 122  )
@@ -153,23 +152,23 @@ void register_form()
                 Comb_msg( buffer, "1" , "$", name  );
                 send( sockfd , buffer , MAXSIZE , 0 );
                 while(1){
-                    if(FLAG[1] == 0){//当服务器检测到用户名不存在时
+                    if(FLAG[1] == 1){//当服务器检测到用户名不存在时
                         flag = 0;
                         break;
-                    }else if( FLAG[1] == 1 ){
+                    }else if( FLAG[1] == 0 ){
                         printf("该用户名已被注册，请选择其他用户名！\n");
                         h = 1;
                         break;
                     }
                 }
-                
+                if(h == 1)
+                    continue;                
             }
         }
-        if(h == 1)
-            continue;
+
         flag = 1;
         while(flag){
-
+            h = 0;
             printf("请输入密码：");
             fgets(  passwd , MAX_PASSWD_SIZE + 2 , stdin );
             
@@ -196,7 +195,7 @@ void register_form()
                 Comb_msg( buffer, "1" , name , passwd  );
                 send( sockfd , buffer , MAXSIZE , 0 );
                 while(1){
-                    if(FLAG[1] == 0){
+                    if( FLAG[1] == 0 ){
                         printf("注册失败！\n");
                         h = 1;
                         break;
@@ -205,12 +204,12 @@ void register_form()
                         break;
                     }
                 }                
-                
+                if(h == 1)
+                    continue;                
 
             }
         }
-        if(h == 1)
-            continue;
+
         printf("注册成功！你可以登录聊天啦～～ \n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         return;
@@ -263,7 +262,7 @@ void Select_form()
                     if(FLAG[9] == 0){
                         printf("注销失败，请重试！\n");
                         break;
-                    }else if( FLAG[1] == 1 ){
+                    }else if( FLAG[9] == 1 ){
                         printf("注销成功!感谢您的登录,有缘再见(*^_^*)/bye~！\n");
                         return;
                     }
@@ -291,10 +290,9 @@ void Usr_form()
         printf("\t5. 开始聊天\n");
         printf("\t6. 返回\n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");  
-
         while( flag ){
             printf("请输入操作代号：");
-            scanf("%d",&cmd);
+            scanf("%c",&cmd);
             if( cmd < '1' || cmd > '6' ){
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
                 while( ( c = getchar() ) != '\n' && c != EOF );
@@ -604,7 +602,7 @@ void DelFriend_form()
                         if(Cur_class == USR_CLASS)
                             printf("[ 系统提示 ]%s表示：%s 我一定会回来哒～～\n",name,My_Name);
                         else
-                            printf("[ 系统提示 ]你已退出%s群。青山不改，绿水长流，咱们后～会～有～期～\n"name);
+                            printf("[ 系统提示 ]你已退出%s群.青山不改，绿水长流，咱们后～会～有～期～\n", name);
                         break;
                     }else if(FLAG[i]==0){
                         if(Cur_class == USR_CLASS)

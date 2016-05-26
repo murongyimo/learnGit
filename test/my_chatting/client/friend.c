@@ -93,7 +93,7 @@ int Friend_apply( char * name )
         printf("[ 系统提示 ]：%s想要勾搭，咳,加你为好友，你的态度？[Y]同意  [N]拒绝\n",name);
         scanf("%c",&c);
         if( c == 'y' || c == 'Y' ){
-            Add_friend( name , USR_CLASS )
+            Add_friend( name , USR_CLASS );
             return 1;
         }else if( c == 'n' || c == 'N' ){
             return 0;

@@ -117,6 +117,7 @@ void Cut_msg( char * buf , char * name , char * type , char * msg )
     strcpy( name , strtok( buf , "#" ) );
     strcpy( type , strtok( NULL , "#" ) );
     strcpy( msg , strtok( NULL , "\n" ) );
+    printf("接受消息：name = %s , type = %s , msg = %s\n",name , type ,msg);
 }
 
 void get_Time( char * now_time )
@@ -253,6 +254,7 @@ void Comb_msg( char * buf , char * type,char * name  , char * msg )
         sprintf( buf , "%d#%s#%s#%s#%s\n" , My_ID,type,name,My_Name,msg );
     else
         sprintf( buf , "%d#%s#%s#%s\n" , My_ID,type,name,msg );
+    printf("发送消息：id = %d , type = %s , name = %s , msg = %s\n",My_ID,type,name,msg);
 }
 
 
