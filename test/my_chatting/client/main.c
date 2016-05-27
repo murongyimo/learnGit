@@ -90,6 +90,9 @@ int count_friendApply();
 void write_friendApply_result( char * name , int type );
 void write_friendApply_unread( char * name );
 int count_friendApply_result();
+void create_file();
+int Is_usr( char * name );
+void chg_dir( char * name );
 
 int Cur_class;                  //当前操作类型（群组/私聊）
 int Cur_state;                  //当前状态：0 非聊天状态，1 聊天状态
@@ -114,7 +117,7 @@ char buffer[MAXSIZE];
 #include"unread.c"
 #include"message.c"
 #include"form.c"
-
+#include"file.c"
 
 int main( void )
 {

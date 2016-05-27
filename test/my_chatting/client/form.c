@@ -35,6 +35,7 @@ void Start_form()
                 Comb_msg( buffer, "9" , "$" , "1" );
                 send( sockfd , buffer , MAXSIZE , 0 );
                 close(sockfd);
+                printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
             }
             else if( !strcmp( name , "$1\n" ) ){
@@ -84,6 +85,7 @@ void Start_form()
                 Comb_msg( buffer, "9" , "$" , "1" );
                 send( sockfd , buffer , MAXSIZE , 0 );
                 close(sockfd);
+                printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
             }
             else if( !strcmp( passwd , "$1\n" ) ){
@@ -117,7 +119,9 @@ void Start_form()
         printf("[ 系统提示 ]登录成功！ \n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         strcpy(My_Name,name);
+        chg_dir( name );
         Select_form();
+
     }
 }
 
@@ -152,6 +156,7 @@ void Start_form()
                 Comb_msg( buffer, "9" , "$" , "1" );
                 send( sockfd , buffer , MAXSIZE , 0 );
                 close(sockfd);
+                printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
             }
             else if( !strcmp( name , "$1\n" ) )
@@ -175,9 +180,7 @@ void Start_form()
                         break;
                     }
                 }
-/*                if(h == 1)
-                    continue;                
-*/            }
+            }
         }
 
         flag = 1;
@@ -199,6 +202,7 @@ void Start_form()
                 Comb_msg( buffer, "9" , "$" , "1" );
                 send( sockfd , buffer , MAXSIZE , 0 );
                 close(sockfd);
+                printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
             }
             else if( !strcmp( passwd , "$1\n" ) )
@@ -222,9 +226,6 @@ void Start_form()
                         break;
                     }
                 }                
-/*                if(h == 1)
-                    continue;                
-*/
             }
             
         }
@@ -276,7 +277,9 @@ void Select_form()
                 FLAG[9] = -1;
                 Comb_msg( buffer, "9" , "$" , "0" );
                 send( sockfd , buffer , MAXSIZE , 0 );
-                    printf("注销成功!感谢您的登录,有缘再见(*^_^*)/bye~！\n");
+                    printf("[ 系统提示 ]注销成功!感谢您的登录,有缘再见(*^_^*)/bye~！\n");
+                    chdir("./..");
+                    chdir("./..");
                 return;
                break; 
             }
