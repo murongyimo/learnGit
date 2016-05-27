@@ -55,6 +55,7 @@ void Conbine_msg( char * buf , char * name , char * type , char * msg );
 void Cut_msg( char * buf , int * id , char * type , char * name , char * msg );
 int Check_usr( char * name , char * passwd );
 void make_pthread( int * connfd );
+void Grp_talk( int id , char * name , char * msg );
 
 int listenfd;       //监听套接字
 usrNode USR[MAX_USR];

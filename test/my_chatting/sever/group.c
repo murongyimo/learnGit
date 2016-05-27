@@ -128,3 +128,28 @@ void Exit_Grp( char * grp_name , int id )
     }    
 }
 
+void Grp_talk( int id , char * name , char * msg )
+{//群聊发消息
+    char buf[MAXSIZE] , path[MAXPATH];
+    int i;
+    sprintf( path , "./Grp/%s",name );
+
+    FILE * fd;
+    if(  !( fd = fopen( path ,  "r"  ) )){
+        perror( "open Grp_talk path wrong !" );
+        exit(1);
+    }else{
+        while( 1 == fscanf( fd , "%d " , &i ) ){
+            if( USR[i].state == 1 ){
+                sprintf( buf , "%s#%s#%s#%s\n" , name , "8" ,USR[id].name , msg );
+                send( USR[i].connfd , buf , MAXSIZE , 0 );
+            }
+        }   
+        fclose(fd);
+    }
+}
+
+
+
+
+

@@ -142,11 +142,11 @@ int Recv_msg( int fd )
             break;
         }
         case '7':{
-            
+            Conbine_msg( buf , USR[id].name , "7" , msg );
             break;
         }
         case '8':{
-            
+            Grp_talk( id , name , msg );
             break;
         }
         case '9':{
