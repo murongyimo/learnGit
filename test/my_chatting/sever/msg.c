@@ -8,8 +8,9 @@
 
 void make_pthread( int * connfd )
 {
+    int fd = * connfd;
     while(1){
-        Recv_msg(*connfd);
+        Recv_msg(fd);
     }
 }
 void Cut_msg( char * buf , int * id , char * type , char * name , char * msg )
@@ -50,10 +51,12 @@ void Recv_msg( int fd )
             }else{//密码校验     
                 id = Is_usr( name );
                 sprintf( id_buf , "%d" , id );             
-                if( Check_usr( name , msg ) )
+                if( !LogIn_usr( name , msg ) )
                     Conbine_msg( buf , "$" , "0" , "0" );//用户登录失败
                 else{
-                    LogIn_usr( name , msg );
+                    strcpy( USR[id].name , name );
+                    USR[id].state = 1;
+                    USR[id].connfd = fd;
                     Conbine_msg( buf , "$" , "0" , id_buf );//用户登录成功
                 }
             }
@@ -70,32 +73,33 @@ void Recv_msg( int fd )
                     printf("name:%s , msg:%s",name , msg);
                     Conbine_msg( buf , "$" , "1" , "0" );//用户注册失败
                 }
-                else
+                else{
                     Conbine_msg( buf , "$" , "1" , "1" );//用户注册成功
+                }
             }            
             break;
         }
         case '2':{
-
+ 
             if( msg[0] == '0' ){
-                i = Is_online( name );               
+                i = Is_online( name );           
                 if( i == 1 )
                     Conbine_msg( buf , "$" , "2" , "3" );
                 else if( i == 2 )
                     Conbine_msg( buf , "$" , "2" , "4" );
                 else{
-                    Conbine_msg( buf , USR[id].name , "2" , "2" );
-                    id = Is_usr( name );
-                    fd = * ( USR[id].connfd );
+                    
+                    Conbine_msg( buf , USR[id].name , "2" , "2" );                    i = Is_usr( name );
+                    fd = USR[i].connfd ;
                 }
             }else if( msg[0] == '1' ){
                 Conbine_msg( buf , USR[id].name , "2" , "1" );
-                id = Is_usr( name );                
-                fd = * ( USR[id].connfd );
-            }else if( msg[1] == '2' ){
+                i = Is_usr( name );                
+                fd = USR[i].connfd;
+            }else if( msg[0] == '2' ){
                 Conbine_msg( buf , USR[id].name , "2" , "0" );
-                id = Is_usr( name );                
-                fd = * ( USR[id].connfd );
+                i = Is_usr( name );                
+                fd = USR[i].connfd;
             }
             break;
         }
@@ -109,7 +113,7 @@ void Recv_msg( int fd )
                     Conbine_msg( buf , USR[id].name , "3" , "2" );
                 }
                 id = Is_usr( name );                
-                fd = * ( USR[id].connfd );                    
+                fd = USR[id].connfd;                    
             }
             break;
         }

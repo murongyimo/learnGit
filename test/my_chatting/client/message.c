@@ -117,7 +117,7 @@ void Cut_msg( char * buf , char * name , char * type , char * msg )
     strcpy( name , strtok( buf , "#" ) );
     strcpy( type , strtok( NULL , "#" ) );
     strcpy( msg , strtok( NULL , "\n" ) );
-    printf("接受消息：name = %s , type = %s , msg = %s\n",name , type ,msg);
+//    printf("接受消息：name = %s , type = %s , msg = %s\n",name , type ,msg);
 }
 
 void get_Time( char * now_time )
@@ -152,21 +152,16 @@ void process_msg( char * buf )
         }
         case '2':{
             if( msg[0] == '0' )//对方拒绝
-                FLAG[2] = 0;
-            else if( msg[0] == '1' ){//加入成功
-                Add_friend( name , USR_CLASS );                
-                FLAG[2] = 1;
+                write_friendApply_result( name , 0 );
+            else if( msg[0] == '1' ){//对方同意
+                write_friendApply_result( name , 1 );
+                Add_friend( name , USR_CLASS );
             }else if( msg[0] == '2' ){//有好友申请发送过来
-                if( Friend_apply( name ) )
-                    Comb_msg( buf , "2" , name , "1" );//同意
-                else
-                    Comb_msg( buf , "2" , name, "2" );//拒绝
-                send( sockfd , buffer , MAXSIZE , 0 );
-                FLAG[2] = 2;
+                write_friendApply_unread( name );
             }else if( msg[0] == '3' ){//没有这个人
-                FLAG[2] = 3;
+                printf("[ 系统提示 ]查无此人～你在逗我么，亲？（悄悄告诉你，可以自己建个小号自己和自己聊～不过你好无聊～）\n");
             }else if( msg[0] == '4' ){//用户不在线
-                FLAG[2] = 4;
+                printf("[ 系统提示 ]叮～你想要加的人不在线，不要大意的把ta从被窝里掀起来拯救世界吧孩纸～\n");
             }       
             break;
         }
@@ -254,7 +249,7 @@ void Comb_msg( char * buf , char * type,char * name  , char * msg )
         sprintf( buf , "%d#%s#%s#%s#%s\n" , My_ID,type,name,My_Name,msg );
     else
         sprintf( buf , "%d#%s#%s#%s\n" , My_ID,type,name,msg );
-    printf("发送消息：id = %d , type = %s , name = %s , msg = %s\n",My_ID,type,name,msg);
+//    printf("发送消息：id = %d , type = %s , name = %s , msg = %s\n",My_ID,type,name,msg);
 }
 
 

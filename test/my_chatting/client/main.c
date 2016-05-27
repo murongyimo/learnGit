@@ -84,14 +84,21 @@ void process_msg( char * buf );
 void Comb_msg( char * buf , char * name , char * type , char * msg );
 int Get_unread_cnt( msgNode * h );
 int Friend_apply( char * name );
-
+void watch_friendApply();
+void handle_friendApply();
+int count_friendApply();
+void write_friendApply_result( char * name , int type );
+void write_friendApply_unread( char * name );
+int count_friendApply_result();
 
 int Cur_class;                  //当前操作类型（群组/私聊）
 int Cur_state;                  //当前状态：0 非聊天状态，1 聊天状态
 char Cur_name[MAX_NAME_SIZE];   //当前聊天对象
- 
+
 msgNode * Head;
-int unread_cnt = 0;                 //未读信息总数
+int apply_num = 0;              //好友申请数目 
+int apply_result = 0;           //申请回复数
+int unread_cnt = 0;             //未读信息总数
 int sockfd;                     //套接字符号
 int FLAG[10];                   //发出的任务完成状态,初始-1，1成功，0失败。
 int My_ID = 0;                  //当前登录用户的id
@@ -115,7 +122,11 @@ int main( void )
     struct sockaddr_in serv_addr;
     char buf[MAXSIZE];
     int connfd , optval;
-
+    
+    Head = Read_unread();
+    count_friendApply();
+    count_friendApply_result();
+    
     if( ( sockfd = socket( AF_INET , SOCK_STREAM , 0 ) ) < 0 ){
         perror("socket create wrong !");
         exit(1);
@@ -141,3 +152,4 @@ int main( void )
     }
     return 0;
 }
+

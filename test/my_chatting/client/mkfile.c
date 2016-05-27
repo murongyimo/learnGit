@@ -24,6 +24,11 @@ int main(void)
         perror("Created directorty usr wrong!");
         exit(1);
     }
+    if(  mkdir( "apply" , S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP ) == -1)
+    {
+        perror("Created directorty apply  wrong!");
+        exit(1);
+    }
     if(  mkdir( "./MsgRead/grp" , S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP ) == -1)
     {
         perror("Created directorty grp  wrong!");
@@ -34,5 +39,16 @@ int main(void)
         perror("Created passwd.txt wrong!");
         exit(1);
     }
+    if( (fd1 = creat( "./apply/friend_apply" ,  S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP ) ) == -1)
+    {
+        perror("Created passwd.txt wrong!");
+        exit(1);
+    }
+    if( (fd1 = creat( "./apply/apply_result" ,  S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP ) ) == -1)
+    {
+        perror("Created passwd.txt wrong!");
+        exit(1);
+    }
+    
     return 0;
 }

@@ -118,7 +118,7 @@ msgNode * Read_unread()
         perror("unread open error");
         exit(1);
     }else{
-        do{
+        while( 1 ){
             if(!(fgets( unread_buf , UNREAD , fd )))
                 break;
             if( !( s = strtok( unread_buf , "#" ) ) ){
@@ -140,10 +140,10 @@ msgNode * Read_unread()
                     }
                 }
             }
-        }while( 1 );
-    fclose(fd);
-    unread_cnt = Get_unread_cnt( h );
-    return h;
+        }
+        fclose(fd);
+        unread_cnt = Get_unread_cnt( h );
+        return h;
     }
 }
 
@@ -196,7 +196,7 @@ void Clear_unread( msgNode * h )
 
 int Get_unread_cnt( msgNode * h )
 {//返回未读信息总数
-    int cnt;
+    int cnt = 0;
     msgNode * p = h -> next;
     while(p){
         cnt += p -> cnt;

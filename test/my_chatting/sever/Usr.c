@@ -84,7 +84,7 @@ void Chg_usr_num( int num )
     int fd;
     char buf[10];
     sprintf( buf , "%d" , num );
- if( ( fd = open( "usr_num.txt" , O_WRONLY|O_TRUNC ) ) == -1){
+    if( ( fd = open( "usr_num.txt" , O_WRONLY|O_TRUNC ) ) == -1){
         perror( "open usr_num.txt wrong !" );
         exit(1);        
     }else{
@@ -124,9 +124,9 @@ void Log_write( int id , char * name , int cls )
     int fd;
     get_Time(time);
     if(cls == 0)
-        strcpy(state , "Log in.\n");
+        strcpy(state , "Log in.");
     else
-        strcpy(state , "Log out.\n");
+        strcpy(state , "Log out.");
     sprintf( buf , "%d %s %s %s\n",id , name , state , time );
     
     if( ( fd = open( "log.txt" , O_WRONLY|O_APPEND ) ) == -1){
@@ -147,7 +147,7 @@ int LogIn_usr( char * name , char * passwd )
         perror( "open passwd.txt wrong !" );
         exit(1);
     }else{
-        while( 3 == fscanf( fd , "%s %s %d\n" , name_buf , passwd , &ID ) ){
+        while( 3 == fscanf( fd , "%s %s %d\n" , name_buf , passwd_buf , &ID ) ){
             if( !strcmp( name , name_buf ) ){
                 break;
             }
@@ -166,5 +166,4 @@ void Log_Out_usr( int id )
 {//用户注销
     USR[id].state = 0;
     Log_write( id , USR[id].name , 1 );
-    free(USR[id].connfd);
 }

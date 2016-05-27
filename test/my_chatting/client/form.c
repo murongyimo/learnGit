@@ -52,16 +52,15 @@ void Start_form()
                         flag = 0;
                         break;
                     }else if( FLAG[0] == 0){
-                        h = 1;
-                        printf("该用户名不存在！请重新输入！\n");
+                        printf("[ 系统提示 ]该用户名不存在！请重新输入！\n");
                         break;
                     }
                 }
-                if( h == 1 ) 
-                    continue;                
+            
             }
         }
-
+        if( h == 1 ) 
+            continue;   
         flag = 1;
         while(flag){
             h = 0;
@@ -77,10 +76,13 @@ void Start_form()
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_PASSWD_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
-            else if( !strcmp( name , "$0\n" ) )
+            else if( !strcmp( passwd , "$0\n" ) )
                 exit(0);
-            else if( !strcmp( name , "$1\n" ) )
-                register_form();                
+            else if( !strcmp( passwd , "$1\n" ) ){
+                register_form();
+                h = 1;
+                break;
+            }
             else if( passwd[i] != '\n' )
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
 
@@ -92,40 +94,40 @@ void Start_form()
                 send( sockfd , buffer , MAXSIZE , 0 );
                 while(1){
                     if(FLAG[0] == 0){
-                        printf("密码错误！请重新输入！\n");
-                        h = 1;
+                        printf("[ 系统提示 ]密码错误！请重新输入！\n");
                         break;
                     }else if( FLAG[0] == 1 ){
                         flag = 0;
                         break;
                     }
                 }                
-                if( h == 1 ) 
-                    continue;
+
             }
         }
-
-        printf("登录成功！ \n");
+        if( h == 1 ) 
+            continue;
+        printf("[ 系统提示 ]登录成功！ \n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         strcpy(My_Name,name);
         Select_form();
     }
 }
 
-void register_form()
+ void register_form()
 {//注册界面
     
     int i ,flag = 1 ,h;
     char passwd[MAX_PASSWD_SIZE + 2] ,name[MAX_NAME_SIZE + 2] , c;
     Cur_state = 0;
     while(1){
+        h = 0;
         My_ID = 0;
         printf("\n×××××××××××××××注册界面×××××××××××××××\n");
         printf("     _$0_（退出）     _$1_(登录)\n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
+        flag = 1;
         while(flag){
             h = 0;
-            flag = 1;
             printf("请输入用户名：");
             fgets(  name , MAX_NAME_SIZE + 2 , stdin );
             //判定输入是否正确
@@ -141,7 +143,7 @@ void register_form()
             else if( !strcmp( name , "$0\n" ) )
                 exit(0);
             else if( !strcmp( name , "$1\n" ) )
-                return;         
+                return ;         
             else if( name[i] != '\n' )
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
         
@@ -156,14 +158,14 @@ void register_form()
                         flag = 0;
                         break;
                     }else if( FLAG[1] == 0 ){
-                        printf("该用户名已被注册，请选择其他用户名！\n");
+                        printf("[ 系统提示 ]该用户名已被注册，请选择其他用户名！\n");
                         h = 1;
                         break;
                     }
                 }
-                if(h == 1)
+/*                if(h == 1)
                     continue;                
-            }
+*/            }
         }
 
         flag = 1;
@@ -181,10 +183,10 @@ void register_form()
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_PASSWD_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
-            else if( !strcmp( name , "$0\n" ) )
+            else if( !strcmp( passwd , "$0\n" ) )
                 exit(0);
-            else if( !strcmp( name , "$1\n" ) )
-                return;       
+            else if( !strcmp( passwd , "$1\n" ) )
+                return ;       
             else if( passwd[i] != '\n' )
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
 
@@ -196,7 +198,7 @@ void register_form()
                 send( sockfd , buffer , MAXSIZE , 0 );
                 while(1){
                     if( FLAG[1] == 0 ){
-                        printf("注册失败！\n");
+                        printf("[ 系统提示 ]注册失败！\n");
                         h = 1;
                         break;
                     }else if( FLAG[1] == 1 ){
@@ -204,17 +206,17 @@ void register_form()
                         break;
                     }
                 }                
-                if(h == 1)
+/*                if(h == 1)
                     continue;                
-
+*/
             }
+            
         }
 
-        printf("注册成功！你可以登录聊天啦～～ \n");
+        printf("[ 系统提示 ]注册成功！你可以登录聊天啦～～ \n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
-        return;
     }
-}    
+}   
 
 void Select_form()
 {//选项界面
@@ -288,12 +290,14 @@ void Usr_form()
         printf("\t3. 添加好友\n");
         printf("\t4. 删除好友\n");
         printf("\t5. 开始聊天\n");
-        printf("\t6. 返回\n");
+        printf("\t6. 查看好友申请处理情况 ( %d 条 )\n", apply_result);
+        printf("\t7. 处理好友申请 ( %d 条 )\n",apply_num);
+        printf("\t8. 返回\n");
         printf("×××××××××××××××××××××××××××××××××××××\n\n");  
         while( flag ){
             printf("请输入操作代号：");
             scanf("%c",&cmd);
-            if( cmd < '1' || cmd > '6' ){
+            if( cmd < '1' || cmd > '8' ){
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
@@ -324,6 +328,14 @@ void Usr_form()
                 break;
             }
             case '6':{
+                watch_friendApply();
+                break;
+            }
+            case '7':{
+                handle_friendApply();
+                break;
+            }
+            case '8':{
                 return;
                 break;
             }
@@ -531,31 +543,32 @@ void AddFriend_form()
                 }
                 FLAG[i] = -1;
                 send( sockfd , buffer , MAXSIZE , 0 );
-                while(1){
-                    if( FLAG[i] == 1 ){
-//                        Add_friend(name , Cur_class);  
-                        break;
-                    }else if(FLAG[i]==0){
-                        if( i == 2 )
-                            printf("[ 系统提示 ]对方拒绝了你的好友申请～魅力值不够呀，亲～\n");
-                        else
-                            printf("[ 系统提示 ]该群已满，天涯何处无芳草，英雄何必执着……\n");
-                        break;
-                    }else if(FLAG[i]==3){
-                        printf("[ 系统提示 ]服务器无此记录～你在逗我么，亲？（悄悄告诉你，可以自己建个小号自己和自己聊～PS：你好无聊～）\n");
-                        break;
-                    }else if(FLAG[i]==4){
-                        printf("[ 系统提示 ]叮～你想要加的人不在线，不要大意的把ta从被窝里掀起来拯救世界吧孩纸～\n");
-                        break;
+                if( i == 5 ){
+                    while(1){
+                        if( FLAG[i] == 1 ){  
+                            break;
+                        }else if(FLAG[i]==0){
+                            if( i == 2 )
+                                printf("[ 系统提示 ]对方拒绝了你的好友申请～魅力值不够呀，亲～\n");
+                            else
+                                printf("[ 系统提示 ]该群已满，天涯何处无芳草，英雄何必执着……\n");
+                            break;
+                        }else if(FLAG[i]==3){
+                            printf("[ 系统提示 ]服务器无此记录～你在逗我么，亲？（悄悄告诉你，可以自己建个小号自己和自己聊～PS：你好无聊～）\n");
+                            break;
+                        }else if(FLAG[i]==4){
+                            printf("[ 系统提示 ]叮～你想要加的人不在线，不要大意的把ta从被窝里掀起来拯救世界吧孩纸～\n");
+                            break;
+                        }
                     }
                 }
-
+            sleep(1);
             /*在Add_friend()中加入与服务器的交互*/
             }else{
                 printf("[ 系统提示 ]Ta已经是你的好友啦～不必重复添加.嘛，乖乖和好基友愉快的玩耍吧～\n");
             }
         }
-
+    
     printf("×××××××××××××××××××××××××××××××××××××\n\n");   
 }
 

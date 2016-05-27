@@ -33,7 +33,7 @@
 
 typedef struct usr_node{
     int state;//在线为1,不在线为0
-    int * connfd;
+    int connfd;
     char name[MAX_NAME_SIZE];
 }usrNode;
 

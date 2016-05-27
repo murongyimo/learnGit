@@ -20,7 +20,6 @@ int main(void)
         perror("Created directorty usr wrong!");
         exit(1);
     }
-    
         if( (creat( "passwd.txt" ,  S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP ) ) == -1)
     {
         perror("Created passwd.txt wrong!");
@@ -32,7 +31,7 @@ int main(void)
         perror("Created usr_num.txt wrong!");
         exit(1);
     }    
-            if( (creat( "log.txt" ,  S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP ) ) == -1)
+        if( (creat( "log.txt" ,  S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP ) ) == -1)
     {
         perror("Created log.txt wrong!");
         exit(1);
