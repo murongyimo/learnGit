@@ -38,7 +38,7 @@ typedef struct usr_node{
 }usrNode;
 
 
-void Recv_msg( int fd );
+int Recv_msg( int fd );
 void Chg_usr_num( int num );
 int Get_usr_num();
 int Is_usr( char * name );

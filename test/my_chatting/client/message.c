@@ -231,10 +231,6 @@ void process_msg( char * buf )
             break;
         }
         case '9':{
-            if( msg[0] == '0' )
-                FLAG[9] = 0;
-            else               
-                FLAG[9] = 1;            
             break;
         }
 

@@ -31,8 +31,12 @@ void Start_form()
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_NAME_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
-            else if( !strcmp( name , "$0\n" ) )
+            else if( !strcmp( name , "$0\n" ) ){
+                Comb_msg( buffer, "9" , "$" , "1" );
+                send( sockfd , buffer , MAXSIZE , 0 );
+                close(sockfd);
                 exit(0);
+            }
             else if( !strcmp( name , "$1\n" ) ){
                 register_form();         
                 h = 1;
@@ -76,8 +80,12 @@ void Start_form()
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_PASSWD_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
-            else if( !strcmp( passwd , "$0\n" ) )
+            else if( !strcmp( passwd , "$0\n" ) ){
+                Comb_msg( buffer, "9" , "$" , "1" );
+                send( sockfd , buffer , MAXSIZE , 0 );
+                close(sockfd);
                 exit(0);
+            }
             else if( !strcmp( passwd , "$1\n" ) ){
                 register_form();
                 h = 1;
@@ -140,8 +148,12 @@ void Start_form()
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_NAME_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
-            else if( !strcmp( name , "$0\n" ) )
+            else if( !strcmp( name , "$0\n" ) ){
+                Comb_msg( buffer, "9" , "$" , "1" );
+                send( sockfd , buffer , MAXSIZE , 0 );
+                close(sockfd);
                 exit(0);
+            }
             else if( !strcmp( name , "$1\n" ) )
                 return ;         
             else if( name[i] != '\n' )
@@ -183,8 +195,12 @@ void Start_form()
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_PASSWD_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
-            else if( !strcmp( passwd , "$0\n" ) )
+            else if( !strcmp( passwd , "$0\n" ) ){
+                Comb_msg( buffer, "9" , "$" , "1" );
+                send( sockfd , buffer , MAXSIZE , 0 );
+                close(sockfd);
                 exit(0);
+            }
             else if( !strcmp( passwd , "$1\n" ) )
                 return ;       
             else if( passwd[i] != '\n' )
@@ -258,17 +274,10 @@ void Select_form()
             }
             case '4':{
                 FLAG[9] = -1;
-                Comb_msg( buffer, "9" , "0" , "0" );
+                Comb_msg( buffer, "9" , "$" , "0" );
                 send( sockfd , buffer , MAXSIZE , 0 );
-                while(1){
-                    if(FLAG[9] == 0){
-                        printf("注销失败，请重试！\n");
-                        break;
-                    }else if( FLAG[9] == 1 ){
-                        printf("注销成功!感谢您的登录,有缘再见(*^_^*)/bye~！\n");
-                        return;
-                    }
-                }                
+                    printf("注销成功!感谢您的登录,有缘再见(*^_^*)/bye~！\n");
+                return;
                break; 
             }
 

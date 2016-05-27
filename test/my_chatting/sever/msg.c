@@ -9,9 +9,7 @@
 void make_pthread( int * connfd )
 {
     int fd = * connfd;
-    while(1){
-        Recv_msg(fd);
-    }
+    while(Recv_msg(fd));
 }
 void Cut_msg( char * buf , int * id , char * type , char * name , char * msg )
 {//分割服务器发过来的信息
@@ -30,11 +28,11 @@ void Conbine_msg( char * buf , char * name , char * type , char * msg )
     printf("发送消息：name = %s , type = %s ,msg = %s \n", name, type, msg );
 }
 
-void Recv_msg( int fd )
+int Recv_msg( int fd )
 {   //收到客户端的信息，并进行处理   (waiting~)
     //name:发送者姓名
     char buf[MAXSIZE] , type[5] , msg[MAX_MESSAGE_BUF] , name[MAX_NAME_SIZE] , id_buf[5];
-    int id , i ;//发送者的socket
+    int id , i ,h = 1;//发送者的socket
 
     recv( fd , buf , MAXSIZE , 0 );
     Cut_msg( buf , &id , type , name , msg );
@@ -152,10 +150,19 @@ void Recv_msg( int fd )
             break;
         }
         case '9':{
-            Log_Out_usr( id );
-            Conbine_msg( buf , "$" , "9" , "1" );
+            h = 0;
+            if( msg[0] == '0' ){
+                Log_Out_usr( id );
+                Conbine_msg( buf , "$" , "9" , "1" );
+            }else if( msg[0] == '1' ){
+                close(fd);
+                return 0;
+            }
             break;
         }
     }
-    send( fd , buf , MAXSIZE , 0 );
+    if(h){
+        send( fd , buf , MAXSIZE , 0 );
+    }
+    return 1;
 }
