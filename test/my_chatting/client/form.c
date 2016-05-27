@@ -555,27 +555,12 @@ void AddFriend_form()
                 }
                 FLAG[i] = -1;
                 send( sockfd , buffer , MAXSIZE , 0 );
-                if( i == 5 ){
-                    while(1){
-                        if( FLAG[i] == 1 ){  
-                            break;
-                        }else if(FLAG[i]==0){
-                            if( i == 2 )
-                                printf("[ 系统提示 ]对方拒绝了你的好友申请～魅力值不够呀，亲～\n");
-                            else
-                                printf("[ 系统提示 ]该群已满，天涯何处无芳草，英雄何必执着……\n");
-                            break;
-                        }else if(FLAG[i]==3){
-                            printf("[ 系统提示 ]服务器无此记录～你在逗我么，亲？（悄悄告诉你，可以自己建个小号自己和自己聊～PS：你好无聊～）\n");
-                            break;
-                        }else if(FLAG[i]==4){
-                            printf("[ 系统提示 ]叮～你想要加的人不在线，不要大意的把ta从被窝里掀起来拯救世界吧孩纸～\n");
-                            break;
-                        }
-                    }
+                
+                if( Cur_class == USR_CLASS ){
+                    sleep(1);
+                }else{
+                    while(FLAG[i]+1);
                 }
-            sleep(1);
-            /*在Add_friend()中加入与服务器的交互*/
             }else{
                 printf("[ 系统提示 ]Ta已经是你的好友啦～不必重复添加.嘛，乖乖和好基友愉快的玩耍吧～\n");
             }
@@ -606,41 +591,22 @@ void DelFriend_form()
         }else if( name[i] != '\n' )
             printf("[wrong] >> 您的输入有异常，请重新输入！\n");
         else{ 
-            if(  !Is_Friend( name , USR_CLASS ) ){
+            if(  !Is_Friend( name , Cur_class ) ){
                 printf("[ 系统提示 ]你的好友列表中并没有这样一条记录，你……梦游呢？\n");
                 return;
             }
             name[i] = '\0';
-            if(Is_Friend( name , Cur_class )){
-                if( Cur_class == USR_CLASS ){
-                    Comb_msg( buffer , "3" , name , "0" );
-                    i = 3;
-                }else{
-                    Comb_msg( buffer , "6" , name , "0" );
-                    i = 6;
-                }
-                FLAG[i] = -1;
-                send( sockfd , buffer , MAXSIZE , 0 );
-                while(1){
-                    if( FLAG[i] == 2 ){
-                        Del_friend( name , Cur_class ); 
-                        if(Cur_class == USR_CLASS)
-                            printf("[ 系统提示 ]%s表示：%s 我一定会回来哒～～\n",name,My_Name);
-                        else
-                            printf("[ 系统提示 ]你已退出%s群.青山不改，绿水长流，咱们后～会～有～期～\n", name);
-                        break;
-                    }else if(FLAG[i]==0){
-                        if(Cur_class == USR_CLASS)
-                            printf("[ 系统提示 ]删除失败，此人并不在线，看来施主你们缘分未尽，绝对不是服务器的问题，喵～（无辜脸）\n");
-                        else{
-                            printf("[ 系统提示 ]退出群聊失败，看来你注定要呆在这里啦哈哈哈～\n");
-                        }
-                        break;
-                    }
-                }            
 
-            /*在Del_friend()中加入与服务器的交互*/
-        }
+            if( Cur_class == USR_CLASS ){
+                Comb_msg( buffer , "3" , name , "0" );
+                i = 3;
+            }else{
+                Comb_msg( buffer , "6" , name , "0" );
+                i = 6;
+            }
+            FLAG[i] = -1;
+            send( sockfd , buffer , MAXSIZE , 0 );
+                while(FLAG[i]+1);
     }
     printf("×××××××××××××××××××××××××××××××××××××\n\n");   
 }

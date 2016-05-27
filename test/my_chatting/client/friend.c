@@ -188,20 +188,26 @@ void handle_friendApply()
 
 
 void write_friendApply_result( char * name , int type )
-{//用于向apply_result文件中写入 发出的好友申请 的 处理结果。type为1同意，为0拒绝。 
+{//用于向apply_result文件中写入 发出的好友申请 的 处理结果。type为1同意，0拒绝,2被删除通知 。 
     int fd ;
     char buf[MAX_NAME_SIZE + 100];
     if( ( fd = open( "./apply/apply_result" , O_WRONLY|O_APPEND ) ) == -1){
         perror( "open ./apply/apply_result wrong !" );
         exit(1);        
     }else{
-        if( type == 0 )
+        if( type == 0 ){
             sprintf( buf , "%s 拒绝了你的好友申请～魅力值不够呀，亲～\n", name );
-        else
+            apply_result++;   
+        }
+        else if( type == 1 ){
             sprintf( buf , "%s 批准了你申请发展纯洁革命友谊的请求，和好基友一起愉快的玩耍吧～\n", name );
+        apply_result++;            
+        }else if( type == 2 ){
+            sprintf( buf , "[ 系统提示 ]%s居然删除了你～kuai去打ta……咳，本系统才不是想看热闹呢，哼～\n", name );           
+        }
         write( fd , buf , strlen(buf) );
         close(fd);
-        apply_result++;
+
     }
 }
 

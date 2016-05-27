@@ -166,16 +166,20 @@ void process_msg( char * buf )
             break;
         }
         case '3':{
-             if( msg[0] == '0' )
+             if( msg[0] == '0' ){
+                 printf("[ 系统提示 ]删除失败，此人并不在线，看来施主你们缘分未尽，绝对不是服务器的问题，喵～（无辜脸）\n");
                 FLAG[3] = 0;
+             }
             else if( msg[0] == '2' ){
-                Del_friend( name , USR_CLASS );                
+                Del_friend( name , USR_CLASS ); 
+                printf( "[ 系统提示 ]%s删除成功，以前看月亮的时候叫人家小甜甜，现在新人换旧人就把人家删掉……你好狠的心呐～QAQ～\n", name );
                 FLAG[3] = 1;
             }else if(msg[0] == '1'){
                 Del_friend( name , USR_CLASS );
                 Comb_msg( buf , "3" , name , "1" );
-                printf("[ 系统提示 ]%s居然删除了你～kuai去打ta……PS：本系统才不是想看热闹呢，哼～\n",name);
-                    }                
+                send( sockfd , buf , MAXSIZE , 0 );
+                write_friendApply_result( name , 2 );
+            }                
             break;
         }
         case '4':{
@@ -188,21 +192,23 @@ void process_msg( char * buf )
             break;
         }
         case '5':{
-            if( msg[0] == '0' )
+            if( msg[0] == '0' ){
+                printf("[ 系统提示 ]该群已满，天涯何处无芳草，英雄何必执着……\n");
                 FLAG[5] = 0;
+            }
             else if( msg[0] == '1' ){
+                printf("[ 系统提示 ]群组加入成功，请不要在意节操的开始聊天吧o(^_^)o\n");
                 Add_friend( name , GRP_CLASS );                
                 FLAG[5] = 1;
             }else{
+                printf("[ 系统提示 ]服务器无此记录～你在逗我么，亲？（悄悄告诉你，可以自己建个小号自己和自己聊～PS：你好无聊～）\n");
                 FLAG[5] = 3;
             }
             break;
         }
         case '6':{
-            if( msg[0] == '0' )
-                FLAG[6] = 0;
-            else{
-                Del_friend( name , GRP_CLASS );                
+            if( msg[0] == '2' ){
+                printf("[ 系统提示 ]你已退出%s群.青山不改，绿水长流，咱们后～会～有～期～\n", name);
                 FLAG[6] = 2;
             }              
             break;

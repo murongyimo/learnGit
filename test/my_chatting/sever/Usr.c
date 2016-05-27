@@ -120,14 +120,14 @@ void get_Time( char * now_time )
 
 void Log_write( int id , char * name , int cls )
 {//写入日志：cls = 0为登录，cls = 1为注销
-    char time[MAX_TIME_SIZE] , state[20],buf[MAX_TIME_SIZE+50+MAX_NAME_SIZE];
+    char time[MAX_TIME_SIZE] , state[20],buf[MAXSIZE];
     int fd;
     get_Time(time);
     if(cls == 0)
         strcpy(state , "Log in.");
     else
         strcpy(state , "Log out.");
-    sprintf( buf , "%d %s %s %s\n",id , name , state , time );
+    sprintf( buf , "[ %d. %s ]\t%s\t%s\n",id , name , time, state );
     
     if( ( fd = open( "log.txt" , O_WRONLY|O_APPEND ) ) == -1){
         perror( "open log.txt wrong !" );

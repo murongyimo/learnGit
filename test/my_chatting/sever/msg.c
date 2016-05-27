@@ -87,7 +87,8 @@ int Recv_msg( int fd )
                     Conbine_msg( buf , "$" , "2" , "4" );
                 else{
                     
-                    Conbine_msg( buf , USR[id].name , "2" , "2" );                    i = Is_usr( name );
+                    Conbine_msg( buf , USR[id].name , "2" , "2" ); 
+                    i = Is_usr( name );
                     fd = USR[i].connfd ;
                 }
             }else if( msg[0] == '1' ){
