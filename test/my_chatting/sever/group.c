@@ -139,10 +139,11 @@ void Grp_talk( int id , char * name , char * msg )
         perror( "open Grp_talk path wrong !" );
         exit(1);
     }else{
-        fscanf( fd , "%d " , &i );
-        while( 1 == fscanf( fd , "%d " , &i ) ){
+        fscanf( fd , "%d" , &i );
+        while( 1 == fscanf( fd , " %d" , &i ) ){
             if( USR[i].state == 1 ){
-                sprintf( buf , "%s#%s#%s#%s\n" , name , "8" ,USR[id].name , msg );
+                sprintf( buf , "%s#%s#%s\n" , name , "8" , msg );
+                printf("发送消息：name = %s , type = %s , msg = %s \n", name, "8" , msg );
                 send( USR[i].connfd , buf , MAXSIZE , 0 );
             }
         }   

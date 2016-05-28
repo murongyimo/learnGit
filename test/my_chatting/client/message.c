@@ -129,7 +129,7 @@ void get_Time( char * now_time )
 
 void process_msg( char * buf )
 {//处理从服务器接受的信息的主函数
-    char name[MAX_NAME_SIZE] , type[5] , msg[MAX_MESSAGE_BUF] , grp_name[MAX_NAME_SIZE], now_time[MAX_TIME_SIZE];
+    char name[MAX_NAME_SIZE] , type[5] , msg[MAX_MESSAGE_BUF] , grp_name[MAX_NAME_SIZE], now_time[MAX_TIME_SIZE],msg_buf[MAX_MESSAGE_BUF];
     get_Time(now_time);
     Cut_msg( buf , name , type , msg );
     switch( type[0] ){
@@ -230,13 +230,13 @@ void process_msg( char * buf )
         case '8':{//发消息（群聊）
             //当前操作为群时，name为群名，Grp_name 为发送用户名,Grp_msg 为消息。
             strcpy( grp_name ,  strtok( msg , "#" ));
-            strcpy( msg ,  strtok( NULL , "\n" ));
-            if( Cur_state == 1 && Cur_class == GRP_CLASS && !strcmp( grp_name , Cur_name ) ){
-                printf("[%s 说：]%s\n",grp_name,msg);
-                Write_msgRecord( name , grp_name , msg , now_time , GRP_CLASS );
+            strcpy( msg_buf ,  strtok( NULL , "\0" ));
+            if( Cur_state == 1 && Cur_class == GRP_CLASS && !strcmp( name , Cur_name ) ){
+                printf("[%s ：]%s\n",grp_name,msg_buf);
+                Write_msgRecord( name , grp_name , msg_buf , now_time , GRP_CLASS );
             }else{
                 MsgIn_unread( Head , 1 , GRP_CLASS , name );
-                Write_msgRecord( name , grp_name , msg , now_time , GRP_CLASS );
+                Write_msgRecord( name , grp_name , msg_buf , now_time , GRP_CLASS );
             }
             break;
         }

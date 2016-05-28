@@ -127,7 +127,7 @@ void Log_write( int id , char * name , int cls )
         strcpy(state , "Log in.");
     else
         strcpy(state , "Log out.");
-    sprintf( buf , "[ %d. %s ]\t%s\t%s\n",id , name , time, state );
+    sprintf( buf , "[ %s ]\t%s\t%s\n", name , time, state );
     
     if( ( fd = open( "log.txt" , O_WRONLY|O_APPEND ) ) == -1){
         perror( "open log.txt wrong !" );

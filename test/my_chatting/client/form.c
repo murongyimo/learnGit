@@ -117,12 +117,13 @@ void Start_form()
         if( h == 1 ) 
             continue;
         printf("[ 系统提示 ]登录成功！ \n");
-        printf("×××××××××××××××××××××××××××××××××××××\n\n");
         strcpy(My_Name,name);
         chg_dir( name );
-        Head = Read_unread();
+        Head = Read_unread();       
+        printf("×××××××××××××××××××××××××××××××××××××\n\n");
+
         count_friendApply();
-        count_friendApply_result();
+        count_friendApply_result();         
         Select_form();
 
     }
@@ -633,7 +634,10 @@ void Chat_form( char * name )
         flag = 1;
 //        printf("[%s :]",My_Name);
         fgets(  buf , MAX_MESSAGE_BUF + 2 , stdin );
-
+        if( buf[0] == '\n' ){
+            printf("[ 系统$提示 ] 请确保输入的字符串不为空，本系统才不会那么轻易的狗die呢，哼～\n");
+            continue;
+        }
         for( i = 0 ; i < strlen(buf) ; i++ ){
             if( buf[i] =='\n' || buf[i] =='\0' )
                 break;
@@ -662,7 +666,8 @@ void Chat_form( char * name )
             }
             FLAG[i] = -1;
             send( sockfd , msg , MAXSIZE , 0 );
-            printf("[%s :]%s\n",My_Name,buf);
+            if( Cur_class == USR_CLASS )
+                printf("[%s :]%s\n",My_Name,buf);
         }
     }
     

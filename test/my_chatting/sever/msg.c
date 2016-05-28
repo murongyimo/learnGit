@@ -153,6 +153,7 @@ int Recv_msg( int fd )
             break;
         }
         case '8':{
+            h = 0;
             Grp_talk( id , name , msg );
             break;
         }

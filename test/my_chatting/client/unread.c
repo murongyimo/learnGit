@@ -86,7 +86,7 @@ void Write_unread( msgNode * h )
         exit(1);
     }else{
         while( p ){
-            sprintf( unread_buf , "%d#%s%d\n" , p->type , p->name , p->cnt);
+            sprintf( unread_buf , "%d#%s#%d\n" , p->type , p->name , p->cnt);
             p = p->next;
             write( fd , unread_buf , strlen(unread_buf) );
         }
@@ -118,7 +118,7 @@ msgNode * Read_unread()
                     perror("getting name error");
                     exit(1);
                 }else{
-                    if( !( s = strtok( NULL , "#" ) ) ){
+                    if( !( s = strtok( NULL , "\n" ) ) ){
                         perror("getting name error");
                         exit(1);
                     }else{
@@ -145,7 +145,7 @@ void Print_unread( msgNode * h )
          if( p -> type == USR_CLASS )
             printf("\t %d. \t USR_CLASS\t ---\t%s\t\t%d\n ",i++,p->name,p->cnt);
          else
-            printf("\t %d. \t GRP_CLASS\t ---\t%s\t\t%d",i++,p->name,p->cnt);
+            printf("\t %d. \t GRP_CLASS\t ---\t%s\t\t%d\n",i++,p->name,p->cnt);
          p = p ->next;
      }
      printf("\t\t\t  ×××××打印结束×××××\n\n");
