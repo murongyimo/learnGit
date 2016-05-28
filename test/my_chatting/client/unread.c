@@ -86,19 +86,7 @@ void Write_unread( msgNode * h )
         exit(1);
     }else{
         while( p ){
-            sprintf( unread_buf , "%d" , p->type );
-            unread_buf[1] = '#';
-            unread_buf[2] = '\0';
-            strcat( unread_buf , p->name );
-            len = strlen( unread_buf );
-            unread_buf[ len ] = '#';
-            unread_buf[ len+1 ] = '\0';
-            sprintf( cnt , "%d" ,p->cnt );
-            strcat( unread_buf , cnt );
-            len = strlen( unread_buf );
-            unread_buf[ len ] = '#';
-            unread_buf[ len + 1 ] = '\n';
-            unread_buf[ len + 2 ] = '\0';
+            sprintf( unread_buf , "%d#%s%d\n" , p->type , p->name , p->cnt);
             p = p->next;
             write( fd , unread_buf , strlen(unread_buf) );
         }
@@ -155,13 +143,12 @@ void Print_unread( msgNode * h )
      printf("\t编号\t类型i\t ---\t用户（组）名\t\t未读信息数\n\n");
      while( p ){
          if( p -> type == USR_CLASS )
-            printf("\t %d. \t USR_CLASS\t ---\t ",i++ );
+            printf("\t %d. \t USR_CLASS\t ---\t%s\t\t%d\n ",i++,p->name,p->cnt);
          else
-            printf("\t %d. \t GRP_CLASS\t ---\t ",i++ );
-         printf("%s\t\t%d\n",p->name,p->cnt);
+            printf("\t %d. \t GRP_CLASS\t ---\t%s\t\t%d",i++,p->name,p->cnt);
          p = p ->next;
      }
-     printf("\t\t\t  ×××××打印结束×××××\n");
+     printf("\t\t\t  ×××××打印结束×××××\n\n");
  }
 
 int Check_unread( msgNode * h ,char * name , int type )
@@ -175,6 +162,7 @@ int Check_unread( msgNode * h ,char * name , int type )
     if( p ){
         Read_msgRecord( name  , type );        
         Del_unread( h , p );
+        Write_unread( Head );
         return 0;
     }else
         return -1;
@@ -185,6 +173,7 @@ void MsgIn_unread( msgNode * h , int cnt , int type , char * name )
     msgNode * p ;
     p = Create_unreadNode( cnt , type , name );
     ADD_unread( h , p );
+    unread_cnt = Get_unread_cnt( h );
     Write_unread( h );
 }
 

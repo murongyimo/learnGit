@@ -42,7 +42,6 @@ int Add_friend( char * name , int type )
     int fd ;
     char path[MAXPATH];    
     if( Is_Friend( name ,type ) ){
-        printf("[ 系统提示 ] Ta 已经是你的好友了!\n");
         return 0;
     }else{
         path[0] = '\0';
@@ -56,7 +55,6 @@ int Add_friend( char * name , int type )
             perror("there is some wrong with Add_friend.");
             exit(1);
         }else{
-            printf("[ 系统提示 ] 好友“%s”加入成功～你们可以开始无节操的玩耍啦(^_^)/~\n",name);
             return 1;
         }
     }
@@ -77,7 +75,6 @@ int Del_friend( char * name , int type )
             perror("there is some wrong with Del_friend.");
             exit(1);
         }else{
-            printf("[ 系统提示 ] 好友“%s”删除成功\n",name);
             return 1;
         }       
     }else{
@@ -196,15 +193,14 @@ void write_friendApply_result( char * name , int type )
         exit(1);        
     }else{
         if( type == 0 ){
-            sprintf( buf , "%s 拒绝了你的好友申请～魅力值不够呀，亲～\n", name );
-            apply_result++;   
+            sprintf( buf , "%s 拒绝了你的好友申请～魅力值不够呀，亲～\n", name ); 
         }
         else if( type == 1 ){
-            sprintf( buf , "%s 批准了你申请发展纯洁革命友谊的请求，和好基友一起愉快的玩耍吧～\n", name );
-        apply_result++;            
+            sprintf( buf , "%s 批准了你申请发展纯洁革命友谊的请求，和好基友一起愉快的玩耍吧～\n", name );            
         }else if( type == 2 ){
             sprintf( buf , "[ 系统提示 ]%s居然删除了你～kuai去打ta……咳，本系统才不是想看热闹呢，哼～\n", name );           
         }
+        apply_result++;  
         write( fd , buf , strlen(buf) );
         close(fd);
 

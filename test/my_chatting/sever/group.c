@@ -139,6 +139,7 @@ void Grp_talk( int id , char * name , char * msg )
         perror( "open Grp_talk path wrong !" );
         exit(1);
     }else{
+        fscanf( fd , "%d " , &i );
         while( 1 == fscanf( fd , "%d " , &i ) ){
             if( USR[i].state == 1 ){
                 sprintf( buf , "%s#%s#%s#%s\n" , name , "8" ,USR[id].name , msg );

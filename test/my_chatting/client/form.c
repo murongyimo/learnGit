@@ -9,7 +9,7 @@
 void Start_form()
 {//初始界面
     int i ,flag , h;
-    char passwd[MAX_PASSWD_SIZE + 2] ,name[MAX_NAME_SIZE + 2] , c;
+    char passwd[MAX_PASSWD_SIZE + 2] ,name[MAX_NAME_SIZE + 2] , c , buf[MAXSIZE];
     Cur_state = 0;
     while(1){
         flag = 1;
@@ -32,8 +32,8 @@ void Start_form()
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
             else if( !strcmp( name , "$0\n" ) ){
-                Comb_msg( buffer, "9" , "$" , "1" );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "9" , "$" , "1" );
+                send( sockfd , buf , MAXSIZE , 0 );
                 close(sockfd);
                 printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
@@ -50,8 +50,8 @@ void Start_form()
                 //将name传到服务器上验证
                 name[i] = '\0';
                 FLAG[0] = -1;
-                Comb_msg( buffer, "0" , "$" , name );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "0" , "$" , name );
+                send( sockfd , buf , MAXSIZE , 0 );
                 while(1){
                     if(FLAG[0] == 1){//当服务器检测到用户名存在时
                         flag = 0;
@@ -82,8 +82,8 @@ void Start_form()
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
             else if( !strcmp( passwd , "$0\n" ) ){
-                Comb_msg( buffer, "9" , "$" , "1" );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "9" , "$" , "1" );
+                send( sockfd , buf , MAXSIZE , 0 );
                 close(sockfd);
                 printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
@@ -100,8 +100,8 @@ void Start_form()
                 //将passwd传到服务器上验证/
                 passwd[i] = '\0';    
                 FLAG[0] = -1;
-                Comb_msg( buffer, "0" , name , passwd );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "0" , name , passwd );
+                send( sockfd , buf , MAXSIZE , 0 );
                 while(1){
                     if(FLAG[0] == 0){
                         printf("[ 系统提示 ]密码错误！请重新输入！\n");
@@ -120,6 +120,9 @@ void Start_form()
         printf("×××××××××××××××××××××××××××××××××××××\n\n");
         strcpy(My_Name,name);
         chg_dir( name );
+        Head = Read_unread();
+        count_friendApply();
+        count_friendApply_result();
         Select_form();
 
     }
@@ -127,9 +130,8 @@ void Start_form()
 
  void register_form()
 {//注册界面
-    
     int i ,flag = 1 ,h;
-    char passwd[MAX_PASSWD_SIZE + 2] ,name[MAX_NAME_SIZE + 2] , c;
+    char passwd[MAX_PASSWD_SIZE + 2] ,name[MAX_NAME_SIZE + 2] , c , buf[MAXSIZE];
     Cur_state = 0;
     while(1){
         h = 0;
@@ -153,8 +155,8 @@ void Start_form()
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
             else if( !strcmp( name , "$0\n" ) ){
-                Comb_msg( buffer, "9" , "$" , "1" );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "9" , "$" , "1" );
+                send( sockfd , buf , MAXSIZE , 0 );
                 close(sockfd);
                 printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
@@ -168,8 +170,8 @@ void Start_form()
                 /*将name传到服务器上验证*/
                 name[i] = '\0';
                 FLAG[1] = -1;
-                Comb_msg( buffer, "1" , "$", name  );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "1" , "$", name  );
+                send( sockfd , buf , MAXSIZE , 0 );
                 while(1){
                     if(FLAG[1] == 1){//当服务器检测到用户名不存在时
                         flag = 0;
@@ -199,8 +201,8 @@ void Start_form()
                 while( ( c = getchar() ) != '\n' && c != EOF );
             }
             else if( !strcmp( passwd , "$0\n" ) ){
-                Comb_msg( buffer, "9" , "$" , "1" );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "9" , "$" , "1" );
+                send( sockfd , buf , MAXSIZE , 0 );
                 close(sockfd);
                 printf("[ 系统提示 ]退出成功！期待下次的会面呦～MUA～\n");
                 exit(0);
@@ -214,8 +216,8 @@ void Start_form()
                 /*将passwd传到服务器上验证*/
                 passwd[i] = '\0';      
                 FLAG[1] = -1;
-                Comb_msg( buffer, "1" , name , passwd  );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "1" , name , passwd  );
+                send( sockfd , buf , MAXSIZE , 0 );
                 while(1){
                     if( FLAG[1] == 0 ){
                         printf("[ 系统提示 ]注册失败！\n");
@@ -238,7 +240,7 @@ void Start_form()
 void Select_form()
 {//选项界面
     int flag;
-    char c,cmd;
+    char c,cmd,buf[MAXSIZE];
     Cur_state = 0;
     while(1){
         flag = 1;
@@ -275,11 +277,12 @@ void Select_form()
             }
             case '4':{
                 FLAG[9] = -1;
-                Comb_msg( buffer, "9" , "$" , "0" );
-                send( sockfd , buffer , MAXSIZE , 0 );
+                Comb_msg( buf, "9" , "$" , "0" );
+                send( sockfd , buf , MAXSIZE , 0 );
                     printf("[ 系统提示 ]注销成功!感谢您的登录,有缘再见(*^_^*)/bye~！\n");
                     chdir("./..");
                     chdir("./..");
+                    Delete_list( Head );
                 return;
                break; 
             }
@@ -376,7 +379,7 @@ void Group_form()
         printf("×××××××××××××××××××××××××××××××××××××\n\n");  
         while( flag ){
             printf("请输入操作代号：");
-            scanf("%d",&cmd);
+            scanf("%c",&cmd);
             if( cmd < '1' || cmd > '7' ){
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
                 while( ( c = getchar() ) != '\n' && c != EOF );
@@ -426,9 +429,10 @@ void FriendMsg_form()
     char name[MAX_NAME_SIZE + 2] , c,cmd;
     while(1){
         flag = 1;
-        printf("\n×××××××××××××查看消息记录××××××××××××\n");
+        printf("\n×××××××××××××查看消息记录××××××××××××\n\n");
+        Print_msgDir( Cur_class );
         while(flag){
-            printf("请输入待查聊天名：");
+            printf("请输入待查聊天名（$0退出）：");
             fgets(  name , MAX_NAME_SIZE + 2 , stdin );
 
             //判定输入是否正确
@@ -440,6 +444,9 @@ void FriendMsg_form()
             if( i == MAX_NAME_SIZE + 1){
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_NAME_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
+            }else if( !strcmp( name , "$0\n" ) ){
+                return;
+                break;
             }else if( name[i] != '\n' )
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
             else{
@@ -458,7 +465,7 @@ void FriendMsg_form()
         flag = 1;
         while( flag ){
             printf("请输入操作代号：");
-            scanf("%d",&cmd);
+            scanf("%c",&cmd);
             if( cmd < '1' || cmd > '2' ){
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
                 while( ( c = getchar() ) != '\n' && c != EOF );
@@ -486,7 +493,7 @@ void CreateGrp_form()
 {//创建一个群聊
     Cur_state = 0;
     int i ,flag = 1;
-    char name[MAX_NAME_SIZE + 2] , c;
+    char name[MAX_NAME_SIZE + 2] , c  , buf[MAXSIZE];
     printf("\n×××××××××××××××添加聊天×××××××××××××××\n");
 
         printf("请输入聊天名称：");
@@ -503,17 +510,19 @@ void CreateGrp_form()
         }else if( name[i] != '\n' )
             printf("[wrong] >> 您的输入有异常，请重新输入！\n");
         else{ 
+            name[i] = '\0';
             if( Is_Friend( name , GRP_CLASS ) ){
                 printf("[ 系统提示 ]你已经在群里了，还要建啥群（为你的智商擦一把汗～）\n");
             }else{
-                Comb_msg( buffer , "4" , name , "0" );
-                send( sockfd , buffer , MAXSIZE , 0 );
-                FLAG[3]=-1;
+                Comb_msg( buf , "4" , name , "0" );
+                send( sockfd , buf , MAXSIZE , 0 );
+                FLAG[4]=-1;
                 while(1){
-                    if(FLAG[3] == 0){
+                    if(FLAG[4] == 0){
                         printf("[ 系统提示 ]很遗憾，这个群已经被人抢占了，不过你可以加入聊天\n");
                         break;
-                    }else{
+                    }else if(FLAG[4] == 1){
+                        Add_friend( name , GRP_CLASS ); 
                         printf("[ 系统提示 ]建群成功，你可以邀请小伙伴们一起来聊天啦～\n");
                         break;
                     }
@@ -527,7 +536,7 @@ void AddFriend_form()
 {//添加聊天
     Cur_state = 0;
     int i ,flag = 1;
-    char name[MAX_NAME_SIZE + 2] , c;
+    char name[MAX_NAME_SIZE + 2] , c , buf[MAXSIZE];
     printf("\n×××××××××××××××添加聊天×××××××××××××××\n");
 
         printf("请输入聊天名称：");
@@ -547,23 +556,22 @@ void AddFriend_form()
             name[i] = '\0';
             if( !Is_Friend( name , Cur_class ) ){
                 if( Cur_class == USR_CLASS ){
-                    Comb_msg( buffer , "2" , name , "0" );
+                    Comb_msg( buf , "2" , name , "0" );
                     i = 2;
                 }else{
-                    Comb_msg( buffer , "5" , name , "0" );
+                    Comb_msg( buf , "5" , name , "0" );
                     i = 5;
                 }
                 FLAG[i] = -1;
-                send( sockfd , buffer , MAXSIZE , 0 );
+                send( sockfd , buf , MAXSIZE , 0 );
                 
-                if( Cur_class == USR_CLASS ){
-                    sleep(1);
-                }else{
+                if( Cur_class == GRP_CLASS ){
                     while(FLAG[i]+1);
                 }
             }else{
                 printf("[ 系统提示 ]Ta已经是你的好友啦～不必重复添加.嘛，乖乖和好基友愉快的玩耍吧～\n");
             }
+            sleep(1);
         }
     
     printf("×××××××××××××××××××××××××××××××××××××\n\n");   
@@ -573,7 +581,7 @@ void DelFriend_form()
 {//退出聊天
     Cur_state = 0;
     int i ,flag = 1;
-    char name[MAX_NAME_SIZE + 2] , c;
+    char name[MAX_NAME_SIZE + 2] , c ,buf[MAXSIZE];
     printf("\n×××××××××××××××删除聊天×××××××××××××××\n");
 
         printf("请输入聊天名称：");
@@ -591,42 +599,43 @@ void DelFriend_form()
         }else if( name[i] != '\n' )
             printf("[wrong] >> 您的输入有异常，请重新输入！\n");
         else{ 
+            name[i] = '\0';            
             if(  !Is_Friend( name , Cur_class ) ){
                 printf("[ 系统提示 ]你的好友列表中并没有这样一条记录，你……梦游呢？\n");
                 return;
             }
-            name[i] = '\0';
-
             if( Cur_class == USR_CLASS ){
-                Comb_msg( buffer , "3" , name , "0" );
+                Comb_msg( buf , "3" , name , "0" );
                 i = 3;
             }else{
-                Comb_msg( buffer , "6" , name , "0" );
+                Comb_msg( buf , "6" , name , "0" );
                 i = 6;
             }
             FLAG[i] = -1;
-            send( sockfd , buffer , MAXSIZE , 0 );
+            send( sockfd , buf , MAXSIZE , 0 );
                 while(FLAG[i]+1);
     }
+    sleep(1);
     printf("×××××××××××××××××××××××××××××××××××××\n\n");   
 }
 
 void Chat_form( char * name )
 {//聊天窗口
     int i , flag;
-    char c;
+    char c , buf[MAX_MESSAGE_BUF] ,msg[MAXSIZE];
     printf("\n×××××××××××××××开始聊天×××××××××××××××\n");
     printf("\t输入$exit退出\n");
     printf("×××××××××××××××××××××××××××××××××××××\n\n");    
     Cur_state = 1;
     strcpy( Cur_name , name );
     while(flag){
+        chat_usr = 0;
         flag = 1;
-        printf("[%s:]",My_Name);
-        fgets(  buffer , MAX_MESSAGE_BUF + 2 , stdin );
+//        printf("[%s :]",My_Name);
+        fgets(  buf , MAX_MESSAGE_BUF + 2 , stdin );
 
-        for( i = 0 ; i < MAX_MESSAGE_BUF + 2 ; i++ ){
-            if( buffer[i] =='\n' || buffer[i] =='\0' )
+        for( i = 0 ; i < strlen(buf) ; i++ ){
+            if( buf[i] =='\n' || buf[i] =='\0' )
                 break;
         }
 
@@ -634,23 +643,26 @@ void Chat_form( char * name )
             printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_MESSAGE_BUF);
             while( ( c = getchar() ) != '\n' && c != EOF );
         }
-        else if( !strcmp( buffer , "$exit\n" ) ){
+        else if( !strcmp( buf , "$exit\n" ) ){
             flag = 0;        
             Cur_state = 0;
         }
-        else if( buffer[i] != '\n' )
+        else if( buf[i] != '\n' )
             printf("[wrong] >> 您的输入有异常，请重新输入！\n");
         else{ 
-            buffer[i] = '\0';
+            buf[i] = '\0';
             if( Cur_class == USR_CLASS ){
-                Comb_msg( buffer , "7" , name , msg_buf );
+                Comb_msg( msg , "7" , name , buf );
                 i = 7;
+                if(chat_usr)
+                    break;
             }else{
-                Comb_msg( buffer , "8" , name , msg_buf );
+                Comb_msg( msg , "8" , name , buf );
                 i = 8;
             }
             FLAG[i] = -1;
-            send( sockfd , buffer , MAXSIZE , 0 );
+            send( sockfd , msg , MAXSIZE , 0 );
+            printf("[%s :]%s\n",My_Name,buf);
         }
     }
     
@@ -697,18 +709,16 @@ void UnreadMsg_form()
    int flag = 1 ,i;
     char cmd , name[MAX_NAME_SIZE + 2] , c;
     while(1){
-        printf("\n×××××××××××××××未读信息×××××××××××××××\n");
-        Clear_unread( Head );
-        Head = Read_unread();
+        printf("\n×××××××××××××××未读信息×××××××××××××××\n\n");
         Print_unread( Head );
         printf("×××××××××××××××××××××××××××××××××××××\n");  
-        printf("\t1. 私聊\n");
-        printf("\t2. 群聊\n");
+        printf("\t1. 未读信息操作（私聊）\n");
+        printf("\t2. 未读信息操作（群聊）\n");
         printf("\t3. 退出\n");    
         printf("×××××××××××××××××××××××××××××××××××××\n");  
         while( flag ){
             printf("请输入操作代号：");
-            scanf("%d",&cmd);
+            scanf("%c",&cmd);
             if( cmd < '1' || cmd > '3' ){
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
                 while( ( c = getchar() ) != '\n' && c != EOF );
@@ -719,12 +729,12 @@ void UnreadMsg_form()
         while( ( c = getchar() ) != '\n' && c != EOF );
         switch( cmd ){
             case '1':{
-                Print_msgDir(USR_CLASS);
+//                Print_msgDir(USR_CLASS);
                 Cur_class = USR_CLASS;
                 break;
             }
             case '2':{
-                Print_msgDir(GRP_CLASS);
+//                Print_msgDir(GRP_CLASS);
                 Cur_class = GRP_CLASS;
                 break;
             }
@@ -735,7 +745,7 @@ void UnreadMsg_form()
         }  
         printf("×××××××××××××××查看消息记录×××××××××××××××\n");
         while(flag){
-            printf("请输入待查聊天名：");
+            printf("请输入待查聊天名：($0返回)");
             fgets(  name , MAX_NAME_SIZE + 2 , stdin );
 
             //判定输入是否正确
@@ -747,12 +757,15 @@ void UnreadMsg_form()
             if( i == MAX_NAME_SIZE + 1){
                 printf("[wrong] >> 字符串超长，请保持在%d个字符以内!\n",MAX_NAME_SIZE);
                 while( ( c = getchar() ) != '\n' && c != EOF );
+            }else if( !strcmp( name , "$0\n" ) ){
+                return;
+                break;
             }else if( name[i] != '\n' )
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
             else{
                 name[i] = '\0'; 
                 if( !Check_unread(Head , name ,Cur_class) ){
-                    Write_unread( Head );
+                    Read_msgRecord( name  , Cur_class );
                     flag = 0;
                 }
 
@@ -766,7 +779,7 @@ void UnreadMsg_form()
         flag = 1;
         while( flag ){
             printf("请输入操作代号：");
-            scanf("%d",&cmd);
+            scanf("%c",&cmd);
             if( cmd < '1' || cmd > '2' ){
                 printf("[wrong] >> 您的输入有异常，请重新输入！\n");
                 while( ( c = getchar() ) != '\n' && c != EOF );

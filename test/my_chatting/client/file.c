@@ -68,7 +68,6 @@ void chg_dir( char * name )
     char path[MAXPATH];
     if( !( Is_usr( name ) ) ){
         sprintf( path , "./USR/%s" , name );
-        printf("path = %s\n",path);
     if(  mkdir( path , S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP ) == -1)
     {
         perror("Created directorty usrname wrong!");
@@ -80,7 +79,6 @@ void chg_dir( char * name )
     }else{
         chdir("./USR");
         chdir(name);
-        printf("there must be wrong.\n");
     }
 }
 

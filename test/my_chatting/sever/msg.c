@@ -131,9 +131,9 @@ int Recv_msg( int fd )
             else{
                 i = Join_Grp( name , id );
                 if( i == 2 )
-                    Conbine_msg( buf , "$" , "5" , "0" );
+                    Conbine_msg( buf , name , "5" , "0" );
                 else if( i == 0 )
-                    Conbine_msg( buf , "$" , "5" , "1" );
+                    Conbine_msg( buf , name , "5" , "1" );
             }
             break;
         }
@@ -143,7 +143,13 @@ int Recv_msg( int fd )
             break;
         }
         case '7':{
-            Conbine_msg( buf , USR[id].name , "7" , msg );
+            if(!Is_online(name)){
+                Conbine_msg( buf , USR[id].name , "7" , msg );
+                id = Is_usr( name );                
+                fd = USR[id].connfd; 
+            }else{
+                Conbine_msg( buf , "$" , "7" , "0");
+            }
             break;
         }
         case '8':{

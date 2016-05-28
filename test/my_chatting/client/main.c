@@ -97,6 +97,7 @@ void chg_dir( char * name );
 int Cur_class;                  //当前操作类型（群组/私聊）
 int Cur_state;                  //当前状态：0 非聊天状态，1 聊天状态
 char Cur_name[MAX_NAME_SIZE];   //当前聊天对象
+int chat_usr = 0 ;               //当前私聊对象的在线状况
 
 msgNode * Head;
 int apply_num = 0;              //好友申请数目 
@@ -125,10 +126,6 @@ int main( void )
     struct sockaddr_in serv_addr;
     char buf[MAXSIZE];
     int connfd , optval;
-    
-    Head = Read_unread();
-    count_friendApply();
-    count_friendApply_result();
     
     if( ( sockfd = socket( AF_INET , SOCK_STREAM , 0 ) ) < 0 ){
         perror("socket create wrong !");

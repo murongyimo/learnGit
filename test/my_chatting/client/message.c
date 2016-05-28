@@ -95,7 +95,7 @@ void Print_msgDir( int message_class )
             }
         }while( filename );
         closedir( fd_usr );
-        printf("\n×××××××××××××××××××××××××××××××××××××\n");
+        printf("\n×××××××××××××××××××××××××××××××××××××\n\n");
     }else if( message_class == GRP_CLASS ){
         fd_grp = opendir( "./MsgRead/grp/" );
         printf("×××××××××××××××群聊列表×××××××××××××××\n");
@@ -106,7 +106,7 @@ void Print_msgDir( int message_class )
                 printf("\t%d. %s\n",i++ ,filename->d_name);
         }while( filename );
         closedir( fd_grp );
-        printf("\n×××××××××××××××××××××××××××××××××××××\n");
+        printf("\n×××××××××××××××××××××××××××××××××××××\n\n");
     }
 }
 
@@ -129,11 +129,11 @@ void get_Time( char * now_time )
 
 void process_msg( char * buf )
 {//处理从服务器接受的信息的主函数
-    char name[MAX_NAME_SIZE] , type[5] , msg[MAX_MESSAGE_BUF] , * Grp_name , * Grp_msg, now_time[MAX_TIME_SIZE];
+    char name[MAX_NAME_SIZE] , type[5] , msg[MAX_MESSAGE_BUF] , grp_name[MAX_NAME_SIZE], now_time[MAX_TIME_SIZE];
     get_Time(now_time);
     Cut_msg( buf , name , type , msg );
     switch( type[0] ){
-        case '0':{
+        case '0':{//登录
             if( msg[0] == '0' )
                 FLAG[0] = 0;
             else{
@@ -142,7 +142,7 @@ void process_msg( char * buf )
             }
             break;
         }
-        case '1':{
+        case '1':{//注册
             if( msg[0] == '0' )
                 FLAG[1] = 0;
             else{
@@ -150,7 +150,7 @@ void process_msg( char * buf )
             }            
             break;
         }
-        case '2':{
+        case '2':{//好友申请
             if( msg[0] == '0' )//对方拒绝
                 write_friendApply_result( name , 0 );
             else if( msg[0] == '1' ){//对方同意
@@ -165,7 +165,7 @@ void process_msg( char * buf )
             }       
             break;
         }
-        case '3':{
+        case '3':{//删除好友
              if( msg[0] == '0' ){
                  printf("[ 系统提示 ]删除失败，此人并不在线，看来施主你们缘分未尽，绝对不是服务器的问题，喵～（无辜脸）\n");
                 FLAG[3] = 0;
@@ -182,16 +182,15 @@ void process_msg( char * buf )
             }                
             break;
         }
-        case '4':{
+        case '4':{//建群
             if( msg[0] == '0' )
                 FLAG[4] = 0;
             else{
-                Add_friend( name , GRP_CLASS );                
                 FLAG[4] = 1;
             }                 
             break;
         }
-        case '5':{
+        case '5':{//加群
             if( msg[0] == '0' ){
                 printf("[ 系统提示 ]该群已满，天涯何处无芳草，英雄何必执着……\n");
                 FLAG[5] = 0;
@@ -206,33 +205,38 @@ void process_msg( char * buf )
             }
             break;
         }
-        case '6':{
+        case '6':{//退群
             if( msg[0] == '2' ){
                 printf("[ 系统提示 ]你已退出%s群.青山不改，绿水长流，咱们后～会～有～期～\n", name);
                 FLAG[6] = 2;
             }              
             break;
         }
-        case '7':{
-            if( Cur_state == 1 && Cur_class == USR_CLASS && !strcmp( name , Cur_name ) ){
-                printf("[ %s 说：]%s\n",name,msg);
-                Write_msgRecord( name , name , msg , now_time , USR_CLASS );
+        case '7':{//发消息（私聊）
+            if( !strcmp( name , "$" ) ){
+                printf("[ 系统提示 ]%s当前不在线，请退出～\n",name);
+                chat_usr = 1;
             }else{
-                MsgIn_unread( Head , 1 , USR_CLASS , name );
-                Write_msgRecord( name , name , msg , now_time , USR_CLASS );
+                if( Cur_state == 1 && Cur_class == USR_CLASS && !strcmp( name , Cur_name ) ){
+                    printf("[ %s ：]%s\n",name,msg);
+                    Write_msgRecord( name , name , msg , now_time , USR_CLASS );
+                }else{
+                    MsgIn_unread( Head , 1 , USR_CLASS , name );
+                    Write_msgRecord( name , name , msg , now_time , USR_CLASS );
+                }
             }
             break;
         }
-        case '8':{
+        case '8':{//发消息（群聊）
             //当前操作为群时，name为群名，Grp_name 为发送用户名,Grp_msg 为消息。
-            Grp_name = strtok( msg , "#" );
-            Grp_msg = strtok( NULL , "\n" );
-            if( Cur_state == 1 && Cur_class == GRP_CLASS && !strcmp( name , Cur_name ) ){
-                printf("[%s 说：]%s\n",Grp_name,Grp_msg);
-                Write_msgRecord( name , Grp_name , Grp_msg , now_time , GRP_CLASS );
+            strcpy( grp_name ,  strtok( msg , "#" ));
+            strcpy( msg ,  strtok( NULL , "\n" ));
+            if( Cur_state == 1 && Cur_class == GRP_CLASS && !strcmp( grp_name , Cur_name ) ){
+                printf("[%s 说：]%s\n",grp_name,msg);
+                Write_msgRecord( name , grp_name , msg , now_time , GRP_CLASS );
             }else{
                 MsgIn_unread( Head , 1 , GRP_CLASS , name );
-                Write_msgRecord( name , Grp_name , Grp_msg , now_time , GRP_CLASS );
+                Write_msgRecord( name , grp_name , msg , now_time , GRP_CLASS );
             }
             break;
         }
